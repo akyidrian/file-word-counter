@@ -23,6 +23,8 @@ private:
     FWCList words;
     FWCMap nodeMap; 
     std::string file; 
+
+    std::string cleanWord(std::string word);
 };
 
 #endif /* FILE_WORD_COUNTER_H */

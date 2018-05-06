@@ -15,24 +15,24 @@ bool compare(const FWCPair p1, const FWCPair p2) {
 FileWordCounter::~FileWordCounter(void) {
 }
 
-FileWordCounter::FileWordCounter(std::string file) {
+FileWordCounter::FileWordCounter(const std::string file) {
     std::ifstream ifs(file);
-    if(!ifs.is_open()) { throw std::runtime_error("Unable to open file: " + file); }
+    if(!ifs.is_open()) { throw std::runtime_error("Unable to open file: \'" + file + "\'"); }
 
-    std::string token;  // May contain several words inside
+    std::string token;  // may contain several words inside
     while(ifs >> token) {
-        std::queue<std::string> que = splitWordToken(token);
-        while(!que.empty()) {
-            std::string word = cleanWord(que.front());
-            que.pop();
-            if(word.empty()) { continue; }
+        std::queue<std::string> foundWords = splitWordToken(token);
+        while(!foundWords.empty()) {
+            std::string word = cleanWord(foundWords.front());
+            foundWords.pop();
+            if(word.empty()) { continue; } // ignore empty words
             addWord(word);
         }
     }
     words.sort(compare);
 }
 
-void FileWordCounter::addWord(std::string word) {
+void FileWordCounter::addWord(const std::string word) {
     FWCMap::iterator it = nodeMap.find(word);
     if(it != nodeMap.end()) {
         (it->second->second)++;
@@ -43,46 +43,53 @@ void FileWordCounter::addWord(std::string word) {
     }
 }
 
-std::queue<std::string> FileWordCounter::splitWordToken(std::string token) {
-    std::queue<std::string> que;
-    std::string word;
-    for(char c : token) {
+std::queue<std::string> FileWordCounter::splitWordToken(const std::string token) {
+    std::queue<std::string> foundWords;
+    std::string newWord;
+    for(const char& c : token) {
         if(c == '_' || c == '/' || c == ':' || c == ';') {
-            if(word.empty()) { continue; }
-            que.push(word);
-            word.clear();
+            if(newWord.empty()) { continue; } // ignore lone-some punctuation
+            foundWords.push(newWord);
+            newWord.clear();
         } else {
-            word.push_back(c);
+            newWord.push_back(c);
         }
     }
-    if(!word.empty()) { que.push(word); }
-    return que;
+    if(!newWord.empty()) { foundWords.push(newWord); }  // in case we haven't added the last newWord
+    return foundWords;
 }
 
-std::string FileWordCounter::cleanWord(std::string word) {
+std::string FileWordCounter::cleanWord(const std::string word) {
     std::string cleanedWord;
-    for(char c : word) {
-        if(c >= '0' && c <= '9') {
-            cleanedWord.push_back(c);
-        }
-        else if(c >= 'a' && c <= 'z') {
+    for(const char& c : word) {
+        if((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c == '-')) {
             cleanedWord.push_back(c);
         }
         else if(c >= 'A' && c <= 'Z') {
-            cleanedWord.push_back(c + ' ');
-        }
-        else if(c == '-') {
-            cleanedWord.push_back(c);
+            cleanedWord.push_back(c + ' ');  // make lowercase (ascii arithmetic)
         }
     }
     return cleanedWord;
 }
 
-std::vector<FWCPair> FileWordCounter::topNWords(unsigned int n) {
+unsigned int FileWordCounter::totalWordsCounted(void) {
+    return nodeMap.size();
+}
+
+unsigned int FileWordCounter::count(const std::string word) {
+    unsigned int count = 0;
+    FWCMap::iterator node = nodeMap.find(word);
+    if(node != nodeMap.end()) {
+        count = node->second->second;
+    }
+    return count;
+}
+
+std::vector<FWCPair> FileWordCounter::topNWords(const unsigned int n) {
     std::vector<FWCPair> topN;
     FWCList::iterator it;
-    unsigned int i = 0;
-    unsigned int prevCount = 0;  // 0 count words are not stored in words list
+    unsigned int i = 0; // topN.size() may be greater than n as some words may have the same rank
+    unsigned int prevCount = 0; // this default is fine because 0 count words are not stored
     for(it = words.begin(); (it != words.end()) && (i < n); ++it) {
         if(prevCount != it->second) {
             prevCount = it->second;
@@ -93,20 +100,7 @@ std::vector<FWCPair> FileWordCounter::topNWords(unsigned int n) {
     return topN;
 }
 
-unsigned int FileWordCounter::totalWordsCounted(void) {
-    return nodeMap.size();
-}
-
-unsigned int FileWordCounter::count(std::string word) {
-    unsigned int count = 0;
-    FWCMap::iterator node = nodeMap.find(word);
-    if(node != nodeMap.end()) {
-        count = node->second->second;
-    }
-    return count;
-}
-
-void FileWordCounter::printTopNWords(unsigned int n) {
+void FileWordCounter::printTopNWords(const unsigned int n) {
     std::vector<FWCPair> topN = FileWordCounter::topNWords(n);
     for(FWCPair p : topN) {
         std::cout << p.first << ": " << p.second << std::endl;

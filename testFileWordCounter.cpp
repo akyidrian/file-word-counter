@@ -1,5 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <string>
+#include <exception>
+#include <stdexcept>
 #include "catch.hpp"
 #include "fileWordCounter.hpp"
 
@@ -30,7 +32,7 @@ TEST_CASE("Using FileWordCounter to count words from \"testFile.txt\"", "[count]
         CHECK(fwc.count(";") == 0);
     }
 
-    SECTION("Checking word frequencies") {
+    SECTION("Checking word frequencies are counted correctly") {
         CHECK(fwc.count("0") == 1);
         CHECK(fwc.count("12") == 1);
         CHECK(fwc.count("345") == 1);
@@ -72,7 +74,7 @@ TEST_CASE("Using FileWordCounter to count words from \"testFile.txt\"", "[count]
 TEST_CASE("Using FileWordCounter on \"testFile.txt\" to get the top N most used words", "[rank]") {
     FileWordCounter fwc("testFile.txt");
 
-    SECTION("Top 10 most used words in decending order") {
+    SECTION("Checking the top 10 most used words (in decending order)") {
         std::vector<FWCPair> top10 = fwc.topNWords(10);
 
         CHECK_FALSE(top10.empty());
@@ -93,4 +95,8 @@ TEST_CASE("Using FileWordCounter on \"testFile.txt\" to get the top N most used 
         CHECK(it->first == "long"); CHECK(it->second == 6); it++;    // 9
         CHECK(it->first == "hello"); CHECK(it->second == 5); it++;   // 10
     }
+}
+
+TEST_CASE("Checking exceptions thrown by FileWordCounter", "[exception]") {
+    REQUIRE_THROWS_AS(FileWordCounter("nonExistentFile.txt"), std::runtime_error);
 }

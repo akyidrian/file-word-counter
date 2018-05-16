@@ -8,7 +8,7 @@
 1. ASCII characters only.
 2. Anything that isn't a-z, A-Z, 0-9 or '-' is ignored. The dash character '-' is assumed to make single words (e.g. solar-powered) so it is not ignored.
 3. A-Z characters are converted to lowercase (a-z) to help with the proper counting of words.
-4. There may be issues with contractions. This is because ''' is ignored. For example, "she'll" and "shell" will be counted as the same.
+4. There may be issues with contractions. This is because the single quote is ignored. For example, "she'll" and "shell" will be counted as the same.
 5. Some punctuation is used to help split word tokens (conjoined words without proper spacing). These are '\_', '/', ':' and ';'.
 6. Different words with the same count are considered to have the same rank. This means in a top N printout it is possible to have greater than N words displayed.
 7. There is sufficient program memory to load all words from a typical file.

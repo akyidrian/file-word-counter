@@ -6,7 +6,7 @@
 TEST_CASE("Using FileWordCounter to count words from \"testFile.txt\"", "[count]") {
     FileWordCounter fwc("testFile.txt");
 
-    REQUIRE(fwc.totalWordsCounted() == 29);
+    CHECK(fwc.totalWordsCounted() == 29);
 
     SECTION("Checking certain characters are ignored") {
         CHECK(fwc.count("'") == 0);
@@ -65,7 +65,7 @@ TEST_CASE("Using FileWordCounter to count words from \"testFile.txt\"", "[count]
         CHECK(fwc.count("over") == 11);
         CHECK(fwc.count("lazy") == 10);
         CHECK(fwc.count("dog") == 9);
-    } 
+    }
 }
 
 TEST_CASE("Using FileWordCounter on \"testFile.txt\" to get the top N most used words", "[rank]") {
@@ -73,9 +73,9 @@ TEST_CASE("Using FileWordCounter on \"testFile.txt\" to get the top N most used 
 
     SECTION("Top 10 most used words in decending order") {
         std::vector<FWCPair> top10 = fwc.topNWords(10);
-        
-        REQUIRE_FALSE(top10.empty());
-        REQUIRE(top10.size() == 13);
+
+        CHECK_FALSE(top10.empty());
+        CHECK(top10.size() == 13);
 
         std::vector<FWCPair>::iterator it = top10.begin();
         CHECK(it->first == "the"); CHECK(it->second == 19); it++;    // 1
@@ -90,7 +90,6 @@ TEST_CASE("Using FileWordCounter on \"testFile.txt\" to get the top N most used 
         CHECK(it->first == "float"); CHECK(it->second == 7); it++;   // 8
         CHECK(it->first == "integer"); CHECK(it->second == 6); it++; // 9
         CHECK(it->first == "long"); CHECK(it->second == 6); it++;    // 9
-        CHECK(it->first == "hello"); CHECK(it->second == 5); it++;   // 10 
-
-    }   
+        CHECK(it->first == "hello"); CHECK(it->second == 5); it++;   // 10
+    }
 }

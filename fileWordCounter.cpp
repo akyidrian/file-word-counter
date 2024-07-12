@@ -15,9 +15,10 @@ bool compare(const FWCPair p1, const FWCPair p2) {
 FileWordCounter::~FileWordCounter(void) {
 }
 
-FileWordCounter::FileWordCounter(const std::string file) {
+FileWordCounter::FileWordCounter(const std::string& file) {
     std::ifstream ifs(file);
     if(!ifs.is_open()) { throw std::runtime_error("Unable to open file: \'" + file + "\'"); }
+    this->file = file;
 
     std::string token;  // may contain several words inside
     while(ifs >> token) {
@@ -25,14 +26,15 @@ FileWordCounter::FileWordCounter(const std::string file) {
         while(!foundWords.empty()) {
             std::string word = cleanWord(foundWords.front());
             foundWords.pop();
-            if(word.empty()) { continue; } // ignore empty words
-            addWord(word);
+            if(!word.empty()) {
+                addWord(word);
+            } 
         }
     }
     words.sort(compare);
 }
 
-void FileWordCounter::addWord(const std::string word) {
+void FileWordCounter::addWord(const std::string& word) {
     FWCMap::iterator it = nodeMap.find(word);
     if(it != nodeMap.end()) {
         (it->second->second)++;
@@ -43,7 +45,7 @@ void FileWordCounter::addWord(const std::string word) {
     }
 }
 
-std::queue<std::string> FileWordCounter::splitWordToken(const std::string token) {
+std::queue<std::string> FileWordCounter::splitWordToken(const std::string& token) {
     std::queue<std::string> foundWords;
     std::string newWord;
     for(const char& c : token) {
@@ -59,7 +61,7 @@ std::queue<std::string> FileWordCounter::splitWordToken(const std::string token)
     return foundWords;
 }
 
-std::string FileWordCounter::cleanWord(const std::string word) {
+std::string FileWordCounter::cleanWord(const std::string& word) {
     std::string cleanedWord;
     for(const char& c : word) {
         if((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c == '-')) {
@@ -76,7 +78,11 @@ unsigned int FileWordCounter::totalWordsCounted(void) {
     return nodeMap.size();
 }
 
-unsigned int FileWordCounter::count(const std::string word) {
+std::string FileWordCounter::getFilePath(void) {
+    return file;
+}
+
+unsigned int FileWordCounter::count(const std::string& word) {
     unsigned int count = 0;
     FWCMap::iterator node = nodeMap.find(word);
     if(node != nodeMap.end()) {

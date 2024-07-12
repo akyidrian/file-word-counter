@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <queue>
 
 typedef std::pair<std::string, unsigned int> FWCPair;
 typedef std::list<FWCPair> FWCList;
@@ -21,10 +22,12 @@ public:
 
 private:
     FWCList words;
-    FWCMap nodeMap; 
-    std::string file; 
+    FWCMap nodeMap;
+    std::string file;
 
     std::string cleanWord(std::string word);
+    std::queue<std::string> splitWordToken(std::string token);
+    void addWord(std::string word);
 };
 
 #endif /* FILE_WORD_COUNTER_H */

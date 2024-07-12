@@ -8,6 +8,7 @@ TEST_CASE("Using FileWordCounter to count words from \"testFile.txt\"", "[count]
 
     CHECK(fwc.totalWordsCounted() == 29);
 
+    // Based on list from https://en.wikipedia.org/wiki/Punctuation
     SECTION("Checking certain characters are ignored") {
         CHECK(fwc.count("'") == 0);
         CHECK(fwc.count("\"") == 0);
@@ -79,8 +80,8 @@ TEST_CASE("Using FileWordCounter on \"testFile.txt\" to get the top N most used 
 
         std::vector<FWCPair>::iterator it = top10.begin();
         CHECK(it->first == "the"); CHECK(it->second == 19); it++;    // 1
-        CHECK(it->first == "quick"); CHECK(it->second == 17); it++;  // 2
         CHECK(it->first == "brown"); CHECK(it->second == 17); it++;  // 2
+        CHECK(it->first == "quick"); CHECK(it->second == 17); it++;  // 2
         CHECK(it->first == "fox"); CHECK(it->second == 14); it++;    // 3
         CHECK(it->first == "jumped"); CHECK(it->second == 13); it++; // 4
         CHECK(it->first == "over"); CHECK(it->second == 11); it++;   // 5

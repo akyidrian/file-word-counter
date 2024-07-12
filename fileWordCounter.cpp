@@ -12,34 +12,60 @@ bool compare(const FWCPair p1, const FWCPair p2) {
     }
 }
 
+FileWordCounter::~FileWordCounter(void) {
+}
+
 FileWordCounter::FileWordCounter(std::string file) {
     std::ifstream ifs(file);
     if(!ifs.is_open()) { throw std::runtime_error("Unable to open file: " + file); }
 
-    // TODO: Split up. Read all words first and then process words?
-    std::string word;
-    while(ifs >> word) {
-        word = cleanWord(word);
-        if(word.empty()) { continue; }
-        FWCMap::iterator it = nodeMap.find(word);
-        if(it != nodeMap.end()) {
-            (it->second->second)++;
-        } else {
-            FWCPair newPair = std::make_pair(word, 1);
-            words.push_back(newPair);
-            nodeMap.insert({word, --words.end()});
+    std::string token;  // May contain several words inside
+    while(ifs >> token) {
+        std::queue<std::string> que = splitWordToken(token);
+        while(!que.empty()) {
+            std::string word = cleanWord(que.front());
+            que.pop();
+            if(word.empty()) { continue; }
+            addWord(word);
         }
     }
     words.sort(compare);
 }
 
-FileWordCounter::~FileWordCounter(void) {
+void FileWordCounter::addWord(std::string word) {
+    FWCMap::iterator it = nodeMap.find(word);
+    if(it != nodeMap.end()) {
+        (it->second->second)++;
+    } else {
+        FWCPair newPair = std::make_pair(word, 1);
+        words.push_back(newPair);
+        nodeMap.insert({word, --words.end()});
+    }
+}
+
+std::queue<std::string> FileWordCounter::splitWordToken(std::string token) {
+    std::queue<std::string> que;
+    std::string word;
+    for(char c : token) {
+        if(c == '_' || c == '/' || c == ':' || c == ';') {
+            if(word.empty()) { continue; }
+            que.push(word);
+            word.clear();
+        } else {
+            word.push_back(c);
+        }
+    }
+    if(!word.empty()) { que.push(word); }
+    return que;
 }
 
 std::string FileWordCounter::cleanWord(std::string word) {
     std::string cleanedWord;
     for(char c : word) {
-        if(c >= 'a' && c <= 'z') {
+        if(c >= '0' && c <= '9') {
+            cleanedWord.push_back(c);
+        }
+        else if(c >= 'a' && c <= 'z') {
             cleanedWord.push_back(c);
         }
         else if(c >= 'A' && c <= 'Z') {

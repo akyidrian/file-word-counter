@@ -1,0 +1,23 @@
+' " ! ? , . ( ) [ ] { } < >
+_ / : ; 
+0 12 345 6789
+
+abcdefg hijklmnop qrs tuv wx yz
+ABCDEFG HIJKLMNOP QRS TUV WX YZ
+she will she'll shell
+hello Hello! Hello? Hello, Hello.
+solar-powered solar powered solar_powered
+
+integer/long float/double/float/double integer/ long /long
+"integer" 'integer' "float" 'float'
+(integer) [integer] {float} <double> <long>
+long;long float:float double: double double; double
+
+the the the the the the the the the the the the the the the the the the the 
+quick quick quick quick quick quick quick quick quick quick quick quick quick quick quick quick quick 
+brown brown brown brown brown brown brown brown brown brown brown brown brown brown brown brown brown 
+fox fox fox fox fox fox fox fox fox fox fox fox fox fox 
+jumped jumped jumped jumped jumped jumped jumped jumped jumped jumped jumped jumped jumped 
+over over over over over over over over over over over 
+lazy lazy lazy lazy lazy lazy lazy lazy lazy lazy 
+dog dog dog dog dog dog dog dog dog 
